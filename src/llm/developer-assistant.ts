@@ -19,6 +19,8 @@ export const chatWithDevelopersAssitant = async (
     instructions,
     input: message,
     tools: [...developerAssitantTools],
+    tool_choice: "auto",
+    parallel_tool_calls: true,
   });
 
   let totalInputTokens = 0;
@@ -102,6 +104,8 @@ export const chatWithDevelopersAssitant = async (
       previous_response_id: response.id,
       input: [...toolOutputs],
       tools: [...developerAssitantTools],
+      tool_choice: "auto",
+      parallel_tool_calls: true,
     });
   }
 
