@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "evaluate": "tsx src/evaluations/evaluator.ts",
-    "toolCall": "tsx src/tool-definitions/tool-executor.ts"
+    "evaluate": "tsx src/evaluations/evaluator.ts"
   },
   "keywords": [],
   "author": "",
