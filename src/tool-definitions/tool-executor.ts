@@ -1,29 +1,75 @@
 import { z } from "zod";
-import { SEARCH_DEVELOPER_DOCS_TOOL } from "../constants/tools.ts";
-import { searchDeveloperTool } from "../tools/search-developer-docs.ts";
-import { AppError } from "../utils/error.ts";
-import { SearchDocSchema } from "../schema/search-doc.ts";
+
+import { TOOL_CALL_TIMEOUT_MS } from "../constants/tools.ts";
+import { ToolExecutionError } from "../utils/error.ts";
+import { toolsRegistry } from "../tools/tools-registry.ts";
 
 const ToolCallSchema = z.object({
   name: z.string(),
-  arguments: z.string(),
+  modelArguments: z.string(),
 });
 
 export const executeTool = (toolName: string, rawArguemnts: string) => {
-  const call = ToolCallSchema.parse({
+  const call = ToolCallSchema.safeParse({
     name: toolName,
-    arguments: rawArguemnts,
+    modelArguments: rawArguemnts,
   });
 
-  switch (call.name) {
-    case SEARCH_DEVELOPER_DOCS_TOOL:
-      const parsedArguements: unknown = JSON.parse(call.arguments);
-      const normalizedArguments = SearchDocSchema.parse(parsedArguements);
+  if (!call.success) {
+    throw new ToolExecutionError(
+      "INVALID_TOOL_CALL",
+      "The tool call format is invalid",
+    );
+  }
 
-      console.log("normalized arguement", normalizedArguments);
-      return searchDeveloperTool(normalizedArguments);
+  const { name, modelArguments } = call.data;
 
-    default:
-      throw new AppError(`Unknown tool: ${call.name}`);
+  const toolCall = toolsRegistry.get(name);
+
+  if (!toolCall) {
+    throw new ToolExecutionError(
+      "UNKNOWN_TOOL_CALL",
+      `The tool ${name} is not available`,
+    );
+  }
+
+  let parsedArguements: unknown;
+
+  try {
+    parsedArguements = JSON.parse(modelArguments);
+  } catch {
+    throw new ToolExecutionError(
+      "INVALID_JSON",
+      "Tool arguments must contain valid JSON",
+    );
+  }
+
+  const signal = AbortSignal.timeout(TOOL_CALL_TIMEOUT_MS);
+
+  try {
+    return toolCall(parsedArguements, { signal });
+  } catch (error) {
+    if (error instanceof ToolExecutionError) {
+      throw error;
+    }
+
+    if (error instanceof z.ZodError) {
+      throw new ToolExecutionError(
+        "INVALID_ARGUMENTS",
+        "The tool arguments failed validations",
+      );
+    }
+
+    if (signal.aborted) {
+      throw new ToolExecutionError(
+        "TOOL_TIMEOUT",
+        "The tool execution exceeded its time limit.",
+      );
+    }
+
+    throw new ToolExecutionError(
+      "TOOL_EXECUTION_FAILED",
+      "The tool could not complete its operation.",
+    );
   }
 };

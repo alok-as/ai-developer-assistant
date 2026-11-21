@@ -1,10 +1,14 @@
 import { openaiClient } from "../services/openai.ts";
 import { DEVELOPER_ASSITANT_PROMPT } from "../instructions/developer-assitant.ts";
 import { config } from "../config/env.ts";
-import { searchDeveloperToolDefinition } from "../tool-definitions/search-tool-defintion.ts";
+import { developerAssitantTools } from "../tool-definitions/developer-assitant-tools.ts";
 import { executeTool } from "../tool-definitions/tool-executor.ts";
 import { AppError } from "../utils/error.ts";
-import { DEVELOPER_ASSISTANT_MAX_TOOL_CALLS } from "../constants/tools.ts";
+import {
+  MAX_TOOL_CALLS_PER_ROUND,
+  MAX_TOOL_ROUNDS,
+  MAX_TOTAL_TOOL_CALLS,
+} from "../constants/tools.ts";
 
 export const chatWithDevelopersAssitant = async (
   message: string,
@@ -14,14 +18,14 @@ export const chatWithDevelopersAssitant = async (
     model: config.OPENAI_MODEL,
     instructions,
     input: message,
-    tools: [...searchDeveloperToolDefinition],
+    tools: [...developerAssitantTools],
   });
 
   let totalInputTokens = 0;
   let totalOutputTokens = 0;
   let totalToolCalls = 0;
 
-  for (let round = 1; round <= DEVELOPER_ASSISTANT_MAX_TOOL_CALLS; round++) {
+  for (let round = 1; round <= MAX_TOOL_ROUNDS; round++) {
     if (response.status !== "completed") {
       throw new AppError(
         `Model response was not completed: ${response.status}`,
@@ -34,7 +38,6 @@ export const chatWithDevelopersAssitant = async (
 
     totalInputTokens += response?.usage?.input_tokens ?? 0;
     totalOutputTokens += response?.usage?.output_tokens ?? 0;
-    totalToolCalls += toolCalls.length;
 
     if (toolCalls.length === 0) {
       return {
@@ -48,6 +51,19 @@ export const chatWithDevelopersAssitant = async (
         rounds: round,
       };
     }
+
+    if (toolCalls.length > MAX_TOOL_CALLS_PER_ROUND) {
+      throw new Error("Too many tool calls in one round");
+    }
+
+    if (
+      totalToolCalls > MAX_TOTAL_TOOL_CALLS ||
+      totalToolCalls + toolCalls.length > MAX_TOTAL_TOOL_CALLS
+    ) {
+      throw new Error("Max tool execution limit exceeded");
+    }
+
+    totalToolCalls += toolCalls.length;
 
     const toolOutputs = await Promise.all(
       toolCalls.map(async (call) => {
@@ -63,12 +79,17 @@ export const chatWithDevelopersAssitant = async (
             }),
           };
         } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Unknown tool execution error";
+
           return {
             type: "function_call_output" as const,
             call_id: call.call_id,
             output: JSON.stringify({
               success: false,
-              data: `Tool execution: ${call.name} failed. Check the tool arguements and try again!`,
+              data: message,
             }),
           };
         }
@@ -80,11 +101,11 @@ export const chatWithDevelopersAssitant = async (
       instructions,
       previous_response_id: response.id,
       input: [...toolOutputs],
-      tools: [...searchDeveloperToolDefinition],
+      tools: [...developerAssitantTools],
     });
   }
 
   throw new AppError(
-    `Maximum tool execution rounds ${DEVELOPER_ASSISTANT_MAX_TOOL_CALLS} exceeded`,
+    `Maximum tool execution rounds ${MAX_TOOL_ROUNDS} exceeded`,
   );
 };
