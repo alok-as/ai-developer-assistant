@@ -7,6 +7,14 @@ export type TAnalyzeQueryUsage = {
 };
 
 export type TAnalyzeQueryResponse = {
+  id: string;
   data: TQueryAnalysis;
   usage: TAnalyzeQueryUsage;
+};
+
+export type TDeveloperAssitantResponse = {
+  data: string;
+  usage: TAnalyzeQueryUsage;
+  toolCalls: number;
+  rounds: number;
 };

@@ -1,4 +1,4 @@
-import { SEARCH_DEVELOPER_DOCS_TOOL } from "../constants/tools-name.ts";
+import { SEARCH_DEVELOPER_DOCS_TOOL } from "../constants/tools.ts";
 
 export const searchDeveloperToolDefinition = [
   {

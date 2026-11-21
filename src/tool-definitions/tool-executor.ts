@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SEARCH_DEVELOPER_DOCS_TOOL } from "../constants/tools-name.ts";
+import { SEARCH_DEVELOPER_DOCS_TOOL } from "../constants/tools.ts";
 import { searchDeveloperTool } from "../tools/search-developer-docs.ts";
 import { AppError } from "../utils/error.ts";
 import { SearchDocSchema } from "../schema/search-doc.ts";
