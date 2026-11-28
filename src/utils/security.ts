@@ -2,7 +2,7 @@ import {
   EXPLAIN_CONCEPT_PROMPT,
   SEARCH_CODE_EXAMPLES_TOOL,
   SEARCH_DEVELOPER_DOCS_TOOL,
-} from "../constants/tools.ts";
+} from "../constants/constants.ts";
 
 const ALLOWED_TOOL_NAMES = new Set([
   SEARCH_DEVELOPER_DOCS_TOOL,

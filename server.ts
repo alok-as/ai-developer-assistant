@@ -1,11 +1,11 @@
 import express, { type Response, type Request } from "express";
 
-import { config } from "./config/env.ts";
-import { errorHandler } from "./middleware/error.ts";
+import { config } from "./src/config/env.ts";
+import { errorHandler } from "./src/middleware/error.ts";
 
-import { createQueryRoutes } from "./routes/query.routes.ts";
-import { createAssitantRoutes } from "./routes/assitant.routes.ts";
-import { initMCP } from "./mcp/mcp-init.ts";
+import { createQueryRoutes } from "./src/app/routes/query.routes.ts";
+import { createAssitantRoutes } from "./src/app/routes/assitant.routes.ts";
+import { initMCP } from "./src/integrations/mcp/mcp-init.ts";
 
 const initApp = async () => {
   const app = express();

@@ -1,11 +1,11 @@
 import { type Response, type Request } from "express";
 
-import { catchAsync } from "../middleware/error.ts";
+import { catchAsync } from "../../middleware/error.ts";
 
-import type { TMCP } from "../mcp/mcp-init.ts";
+import type { TMCP } from "../../integrations/mcp/mcp-init.ts";
 import { createDeveloperAssitantService } from "../services/developer-assistant.ts";
-import { chatSchema } from "../schema/assitant.ts";
-import { promptNameSchema, promptSchema } from "../schema/prompt.ts";
+import { chatSchema } from "../../schema/assitant.ts";
+import { promptNameSchema, promptSchema } from "../../schema/prompt.ts";
 
 export const createAssitantController = (mcp: TMCP) => {
   const assitantService = createDeveloperAssitantService(mcp);

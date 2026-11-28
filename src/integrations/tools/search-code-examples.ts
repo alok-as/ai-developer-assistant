@@ -1,5 +1,5 @@
-import { codeExamples } from "../data/code-examples.ts";
-import type { TSearchCodeExample } from "../schema/search-code-examples.ts";
+import { codeExamples } from "../../knowledge/code-examples.ts";
+import type { TSearchCodeExample } from "../../schema/search-code-examples.ts";
 
 export const searchCodeExamples = ({ query, topic }: TSearchCodeExample) => {
   const queryTerms = query.toLowerCase().split(/\s+/).filter(Boolean);

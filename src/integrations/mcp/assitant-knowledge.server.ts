@@ -8,10 +8,10 @@ import {
   REACT_SERVER_COMPONENTS_RESOURCE_URI,
   SEARCH_CODE_EXAMPLES_TOOL,
   SEARCH_DEVELOPER_DOCS_TOOL,
-} from "../constants/tools.ts";
-import { SearchDocSchema } from "../schema/search-docs.ts";
-import { SearchCodeExampleSchema } from "../schema/search-code-examples.ts";
-import { explainConceptSchema } from "../schema/prompt.ts";
+} from "../../constants/constants.ts";
+import { SearchDocSchema } from "../../schema/search-docs.ts";
+import { SearchCodeExampleSchema } from "../../schema/search-code-examples.ts";
+import { explainConceptSchema } from "../../schema/prompt.ts";
 
 export const createDeveloperKnowledgeServer = () => {
   const server = new McpServer({

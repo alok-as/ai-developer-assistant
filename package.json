@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch ./server.ts",
     "evaluate": "tsx src/evaluations/evaluator.ts",
-    "inspect:mcp": "npx @modelcontextprotocol/inspector npx tsx src/mcp/stdio.ts",
-    "test:mcp-client": "tsx src/mcp/test-client.ts"
+    "inspect:mcp": "npx @modelcontextprotocol/inspector npx tsx src/integrations/mcp/stdio.ts",
+    "test:mcp-client": "tsx src/integrations/mcp/test-client.ts"
   },
   "keywords": [],
   "author": "",

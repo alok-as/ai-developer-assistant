@@ -1,12 +1,12 @@
 import { OpenAI } from "openai";
 import type { Client } from "@modelcontextprotocol/client";
 
-import { MAX_RESOURCE_CHARS } from "../constants/tools.ts";
-import { ToolCallSchema } from "../schema/tool.ts";
+import { MAX_RESOURCE_CHARS } from "../../constants/constants.ts";
+import { ToolCallSchema } from "../../schema/tool.ts";
 
-import { MAX_RESOURCES_PER_REQUEST } from "../constants/tools.ts";
-import { AppError } from "../utils/error.ts";
-import { isAllowedPrompt, isAllowedTool } from "../utils/security.ts";
+import { MAX_RESOURCES_PER_REQUEST } from "../../constants/constants.ts";
+import { AppError } from "../../utils/error.ts";
+import { isAllowedPrompt, isAllowedTool } from "../../utils/security.ts";
 
 export const createMCPToolBridge = async (client: Client) => {
   const { tools: discoveredTools } = await client.listTools();
@@ -75,7 +75,6 @@ export const createMCPResourceBridge = (client: Client) => {
     }
 
     const { resources } = await client.listResources();
-    console.log("called here", resources);
 
     const availableResources = new Map(
       resources.map((resource) => [resource.uri, resource]),
@@ -119,8 +118,6 @@ export const createMCPPromptBridge = (client: Client) => {
     const allowedPrompts = prompts.filter((prompt) =>
       isAllowedPrompt(prompt.name),
     );
-
-    console.log("allowed prompts", allowedPrompts);
 
     return allowedPrompts;
   };

@@ -1,7 +1,7 @@
 import {
   SEARCH_DEVELOPER_DOCS_TOOL,
   SEARCH_CODE_EXAMPLES_TOOL,
-} from "../constants/tools.ts";
+} from "../../constants/constants.ts";
 
 export const developerAssitantTools = [
   {

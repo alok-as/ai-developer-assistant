@@ -1,16 +1,16 @@
-import { openaiClient } from "../sdk/openai.ts";
-import { DEVELOPER_ASSITANT_PROMPT } from "../instructions/developer-assitant.ts";
-import { config } from "../config/env.ts";
-import { AppError } from "../utils/error.ts";
+import { openaiClient } from "../../sdk/openai.ts";
+import { DEVELOPER_ASSITANT_PROMPT } from "../../instructions/developer-assitant.ts";
+import { config } from "../../config/env.ts";
+import { AppError } from "../../utils/error.ts";
 import {
   MAX_TOOL_CALLS_PER_ROUND,
   MAX_TOOL_ROUNDS,
   MAX_TOTAL_TOOL_CALLS,
-} from "../constants/tools.ts";
-import type { TMCP } from "../mcp/mcp-init.ts";
-import type { TChatSchema } from "../schema/assitant.ts";
-import { formatModelInput } from "../utils/llms.ts";
-import type { TAssitantMessage } from "../types/mcp.ts";
+} from "../../constants/constants.ts";
+import type { TMCP } from "../../integrations/mcp/mcp-init.ts";
+import type { TChatSchema } from "../../schema/assitant.ts";
+import { formatModelInput } from "../../utils/llms.ts";
+import type { TAssitantMessage } from "../../types/mcp.ts";
 
 export const createDeveloperAssitantService = (mcp: TMCP) => {
   const runAgentLoop = async (

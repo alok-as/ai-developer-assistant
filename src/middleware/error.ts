@@ -11,8 +11,6 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log("error", error);
-
   const statusCode = error.statusCode ?? 500;
   const message = error.message ?? "Internal Server Error";
 

@@ -9,7 +9,7 @@ export const createDeveloperKnowledgeClient = async () => {
 
   const transport = new StdioClientTransport({
     command: process.execPath,
-    args: ["--import", "tsx", "src/mcp/stdio.ts"],
+    args: ["--import", "tsx", "src/integrations/mcp/stdio.ts"],
     cwd: process.cwd(),
   });
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import type { TMCP } from "../mcp/mcp-init.ts";
+import type { TMCP } from "../integrations/mcp/mcp-init.ts";
 
-import { createAssitantController } from "../controllers/assitant.controller.ts";
+import { createAssitantController } from "../app/controllers/assitant.controller.ts";
 
 export const createAssitantRoutes = (mcp: TMCP) => {
   const router = Router();

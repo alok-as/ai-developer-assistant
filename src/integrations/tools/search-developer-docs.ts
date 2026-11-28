@@ -1,5 +1,5 @@
-import { developerDocs } from "../data/developer-docs.ts";
-import type { TSearchDoc } from "../schema/search-docs.ts";
+import { developerDocs } from "../../knowledge/developer-docs.ts";
+import type { TSearchDoc } from "../../schema/search-docs.ts";
 
 export const searchDeveloperTool = ({ query, topic }: TSearchDoc) => {
   const queryTerms = query.toLowerCase().split(/\s+/).filter(Boolean);

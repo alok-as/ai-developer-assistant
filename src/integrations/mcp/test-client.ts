@@ -1,4 +1,4 @@
-import { createDeveloperKnowledgeClient } from "./developer-knowledge.client.ts";
+import { createDeveloperKnowledgeClient } from "./assitant-knowledge.client.ts";
 
 const main = async () => {
   const client = await createDeveloperKnowledgeClient();
