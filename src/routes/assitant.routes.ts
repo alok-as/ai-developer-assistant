@@ -7,6 +7,7 @@ export const createAssitantRoutes = (mcp: TMCP) => {
   const assitantController = createAssitantController(mcp);
 
   router.post("/chat", assitantController.chat);
+  router.get("/resources", assitantController.listResources);
 
   return router;
 };

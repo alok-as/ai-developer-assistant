@@ -15,3 +15,9 @@ export type TToolHandler = (
   untrustedInput: unknown,
   context: ToolExecutionContext,
 ) => Promise<unknown>;
+
+export type TResource = {
+  uri: string;
+  name: string | undefined;
+  text: string[];
+};

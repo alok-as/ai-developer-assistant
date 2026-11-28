@@ -9,16 +9,24 @@ import {
   MAX_TOTAL_TOOL_CALLS,
 } from "../constants/tools.ts";
 import type { TMCP } from "../mcp/mcp-init.ts";
+import type { TChatSchema } from "../schema/assitant.ts";
+import { formatModelInput } from "../utils/llms.ts";
 
 export const createDeveloperAssitantService = (mcp: TMCP) => {
   const chat = async (
     message: string,
+    uris: TChatSchema["resourceUris"],
     instructions: string = DEVELOPER_ASSITANT_PROMPT,
   ) => {
+    const selectedResources = await mcp.resources.readResources(uris);
+    const input = formatModelInput(message, selectedResources);
+
+    console.log("input", input);
+
     let response = await openaiClient.responses.create({
       model: config.OPENAI_MODEL,
       instructions,
-      input: message,
+      input: input,
       tools: mcp.tools,
       tool_choice: "auto",
       parallel_tool_calls: true,
