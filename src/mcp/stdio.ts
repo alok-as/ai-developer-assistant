@@ -1,5 +1,5 @@
 import { serveStdio } from "@modelcontextprotocol/server/stdio";
-import { createDeveloperKnowledgeServer } from "./developer-knowledge.ts";
+import { createDeveloperKnowledgeServer } from "./developer-knowledge.server.ts";
 
 serveStdio(createDeveloperKnowledgeServer);
 
