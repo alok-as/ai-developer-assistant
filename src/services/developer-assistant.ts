@@ -1,4 +1,4 @@
-import { openaiClient } from "../services/openai.ts";
+import { openaiClient } from "../sdk/openai.ts";
 import { DEVELOPER_ASSITANT_PROMPT } from "../instructions/developer-assitant.ts";
 import { config } from "../config/env.ts";
 import { developerAssitantTools } from "../tool-definitions/developer-assitant-tools.ts";

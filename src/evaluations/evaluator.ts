@@ -1,4 +1,4 @@
-import { analyzeQuery } from "../llm/query-analyzer.ts";
+import { analyzeQuery } from "../services/query-analyzer.ts";
 import {
   QUERY_ANALYSE_ZERO_SHOT_PROMPT,
   QUERY_ANALYSE_FEW_SHOT_PROMPT,

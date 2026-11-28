@@ -3,7 +3,7 @@ import { type Response, type Request } from "express";
 import { catchAsync } from "../middleware/error.ts";
 import { messageSchema } from "../schema/query.ts";
 import { AppError } from "../utils/error.ts";
-import { analyzeQuery } from "../llm/query-analyzer.ts";
+import { analyzeQuery } from "../services/query-analyzer.ts";
 import { formatModelUsage } from "../utils/llms.ts";
 
 export const askDeveloperQuery = catchAsync(
