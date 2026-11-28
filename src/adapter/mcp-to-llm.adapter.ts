@@ -1,28 +1,18 @@
 import { OpenAI } from "openai";
 import type { Client } from "@modelcontextprotocol/client";
 
-import {
-  MAX_RESOURCE_CHARS,
-  SEARCH_CODE_EXAMPLES_TOOL,
-  SEARCH_DEVELOPER_DOCS_TOOL,
-} from "../constants/tools.ts";
+import { MAX_RESOURCE_CHARS } from "../constants/tools.ts";
 import { ToolCallSchema } from "../schema/tool.ts";
 
 import { MAX_RESOURCES_PER_REQUEST } from "../constants/tools.ts";
 import { AppError } from "../utils/error.ts";
-import type { TMCP } from "../mcp/mcp-init.ts";
-
-const ALLOWED_TOOLS = new Set([
-  SEARCH_DEVELOPER_DOCS_TOOL,
-  SEARCH_CODE_EXAMPLES_TOOL,
-]);
+import { isAllowedPrompt, isAllowedTool } from "../utils/security.ts";
 
 export const createMCPToolBridge = async (client: Client) => {
   const { tools: discoveredTools } = await client.listTools();
   const allowedTools = discoveredTools.filter((tool) =>
-    ALLOWED_TOOLS.has(tool.name),
+    isAllowedTool(tool.name),
   );
-  const allowedToolNames = new Set(allowedTools.map((tool) => tool.name));
 
   const tools: OpenAI.Responses.Tool[] = allowedTools.map((tool) => ({
     type: "function",
@@ -33,7 +23,7 @@ export const createMCPToolBridge = async (client: Client) => {
   }));
 
   const executeToolCall = async (name: string, rawArguments: string) => {
-    if (!allowedToolNames.has(name)) {
+    if (!isAllowedTool(name)) {
       return JSON.stringify({
         success: false,
         error: `Tool ${name} is not allowed.`,
@@ -120,5 +110,55 @@ export const createMCPResourceBridge = (client: Client) => {
   return {
     listResources,
     readResources,
+  };
+};
+
+export const createMCPPromptBridge = (client: Client) => {
+  const listPrompts = async () => {
+    const { prompts } = await client.listPrompts();
+    const allowedPrompts = prompts.filter((prompt) =>
+      isAllowedPrompt(prompt.name),
+    );
+
+    console.log("allowed prompts", allowedPrompts);
+
+    return allowedPrompts;
+  };
+
+  const getPrompt = async (
+    name: string,
+    modelArguments: Record<string, string>,
+  ) => {
+    if (!isAllowedPrompt(name)) {
+      throw new AppError("Prompt is not available");
+    }
+
+    const result = await client.getPrompt({
+      name,
+      arguments: modelArguments,
+    });
+
+    const messages = result.messages.flatMap((message) => {
+      if (message.content.type === "text") {
+        return [
+          {
+            role: message.role,
+            content: message.content.text,
+          },
+        ];
+      }
+
+      return [];
+    });
+
+    return {
+      name,
+      messages,
+    };
+  };
+
+  return {
+    listPrompts,
+    getPrompt,
   };
 };

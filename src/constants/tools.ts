@@ -14,3 +14,5 @@ export const REACT_SERVER_COMPONENTS_RESOURCE_URI =
 
 export const MAX_RESOURCES_PER_REQUEST = 3;
 export const MAX_RESOURCE_CHARS = 12_000;
+
+export const EXPLAIN_CONCEPT_PROMPT = "explain_concept";

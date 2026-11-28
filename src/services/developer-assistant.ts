@@ -1,7 +1,6 @@
 import { openaiClient } from "../sdk/openai.ts";
 import { DEVELOPER_ASSITANT_PROMPT } from "../instructions/developer-assitant.ts";
 import { config } from "../config/env.ts";
-import { developerAssitantTools } from "../tool-definitions/developer-assitant-tools.ts";
 import { AppError } from "../utils/error.ts";
 import {
   MAX_TOOL_CALLS_PER_ROUND,
@@ -11,18 +10,13 @@ import {
 import type { TMCP } from "../mcp/mcp-init.ts";
 import type { TChatSchema } from "../schema/assitant.ts";
 import { formatModelInput } from "../utils/llms.ts";
+import type { TAssitantMessage } from "../types/mcp.ts";
 
 export const createDeveloperAssitantService = (mcp: TMCP) => {
-  const chat = async (
-    message: string,
-    uris: TChatSchema["resourceUris"],
+  const runAgentLoop = async (
+    input: string | TAssitantMessage[],
     instructions: string = DEVELOPER_ASSITANT_PROMPT,
   ) => {
-    const selectedResources = await mcp.resources.readResources(uris);
-    const input = formatModelInput(message, selectedResources);
-
-    console.log("input", input);
-
     let response = await openaiClient.responses.create({
       model: config.OPENAI_MODEL,
       instructions,
@@ -112,7 +106,7 @@ export const createDeveloperAssitantService = (mcp: TMCP) => {
         instructions,
         previous_response_id: response.id,
         input: [...toolOutputs],
-        tools: [...developerAssitantTools],
+        tools: mcp.tools,
         tool_choice: "auto",
         parallel_tool_calls: true,
       });
@@ -123,5 +117,23 @@ export const createDeveloperAssitantService = (mcp: TMCP) => {
     );
   };
 
-  return { chat };
+  const chat = async (
+    message: string,
+    uris: TChatSchema["resourceUris"],
+    instructions: string = DEVELOPER_ASSITANT_PROMPT,
+  ) => {
+    const selectedResources = await mcp.readResources(uris);
+    const input = formatModelInput(message, selectedResources);
+    return runAgentLoop(input, instructions);
+  };
+
+  const runPrompt = async (
+    name: string,
+    modelArguments: Record<string, string>,
+  ) => {
+    const prompt = await mcp.getPrompt(name, modelArguments);
+    return runAgentLoop(prompt.messages);
+  };
+
+  return { chat, runPrompt };
 };

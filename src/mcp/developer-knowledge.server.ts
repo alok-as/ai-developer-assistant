@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { searchDeveloperTool } from "../tools/search-developer-docs.ts";
 import { searchCodeExamples } from "../tools/search-code-examples.ts";
 import {
+  EXPLAIN_CONCEPT_PROMPT,
   REACT_SERVER_COMPONENTS_RESOURCE_NAME,
   REACT_SERVER_COMPONENTS_RESOURCE_URI,
   SEARCH_CODE_EXAMPLES_TOOL,
@@ -101,7 +102,7 @@ export const createDeveloperKnowledgeServer = () => {
   );
 
   server.registerPrompt(
-    "explain_concept",
+    EXPLAIN_CONCEPT_PROMPT,
     {
       title: "Explain a technical concept",
       description:

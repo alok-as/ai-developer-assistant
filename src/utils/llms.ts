@@ -2,7 +2,7 @@ import type {
   ParsedResponse,
   Response,
 } from "openai/resources/responses/responses";
-import type { TResource } from "../types/tool.ts";
+import type { TResource } from "../types/mcp.ts";
 
 export const formatModelUsage = <T>(
   response:

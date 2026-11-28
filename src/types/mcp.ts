@@ -21,3 +21,8 @@ export type TResource = {
   name: string | undefined;
   text: string[];
 };
+
+export type TAssitantMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
