@@ -3,11 +3,7 @@ import { z } from "zod";
 import { TOOL_CALL_TIMEOUT_MS } from "../constants/tools.ts";
 import { ToolExecutionError } from "../utils/error.ts";
 import { toolsRegistry } from "../tools/tools-registry.ts";
-
-const ToolCallSchema = z.object({
-  name: z.string(),
-  modelArguments: z.string(),
-});
+import { ToolCallSchema } from "../schema/tool.ts";
 
 export const executeTool = (toolName: string, rawArguemnts: string) => {
   const call = ToolCallSchema.safeParse({

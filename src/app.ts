@@ -5,19 +5,39 @@ import { errorHandler } from "./middleware/error.ts";
 
 import { createQueryRoutes } from "./routes/query.routes.ts";
 import { createAssitantRoutes } from "./routes/assitant.routes.ts";
+import { initMCP } from "./mcp/mcp-init.ts";
 
-const app = express();
-app.use(express.json());
+const initApp = async () => {
+  const app = express();
+  const mcp = await initMCP();
 
-app.get("/api/ping", (_req: Request, res: Response) => {
-  res.send("Server is healthy!");
-});
+  app.use(express.json());
 
-app.use("/api/query", createQueryRoutes());
-app.use("/api/assistant", createAssitantRoutes());
+  app.get("/api/ping", (_req: Request, res: Response) => {
+    res.send("Server is healthy!");
+  });
 
-app.use(errorHandler);
+  app.use("/api/query", createQueryRoutes());
+  app.use("/api/assistant", createAssitantRoutes(mcp));
 
-app.listen(config.PORT, () => {
-  console.log(`Server up and running on port ${config.PORT}`);
+  app.use(errorHandler);
+
+  const server = app.listen(config.PORT, () => {
+    console.log(`Server up and running on port ${config.PORT}`);
+  });
+
+  const shutDown = () => {
+    server.close(async () => {
+      mcp.client.close();
+      process.exit(1);
+    });
+  };
+
+  process.once("SIGINT", shutDown);
+  process.once("SIGTERM", shutDown);
+};
+
+initApp().catch((error) => {
+  console.log("App startup failed!", error);
+  process.exit(1);
 });
